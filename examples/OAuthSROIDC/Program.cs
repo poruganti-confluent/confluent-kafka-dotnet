@@ -38,21 +38,21 @@ namespace Confluent.Kafka.Examples.OAuthOIDC
 {
     public class Program
     {
-        private const string bootstrapServers = "pkc-vr76rn.us-west4.gcp.confluent.cloud:9092";
-        private const String OAuthBearerClientId = "0oa3tq39ol3OLrnQj4x7";
-        private const String OAuthBearerClientSecret = "cLXpPxMZ0eA_tc87AL2ZrtZWZzQtPokpYZcOl8gr";
-        private const String OAuthBearerTokenEndpointURL = "https://dev-531534.okta.com/oauth2/default/v1/token";
-        private const String OAuthBearerScope = "kirk-scope";
+        private const string bootstrapServers = "";
+        private const String OAuthBearerClientId = "";
+        private const String OAuthBearerClientSecret = "";
+        private const String OAuthBearerTokenEndpointURL = "";
+        private const String OAuthBearerScope = "";
 
-        private const string stUrl = "https://psrc-rrk3g1.eastus.azure.confluent.cloud";
-        //'basic.auth.user.info': 'OJVS7YASPQKL4ORN:bYMxXMV6E67aTdhMt5R66nWk7u9aB5CP+QCtEnrNgYebiNExfCajTSzX1MqmW2RT'
+        private const string stUrl = "";
+        //'basic.auth.user.info': ''
         //'bearer.auth.credentials.source': 'OAUTHBEARER',
-        //'bearer.auth.issuer.endpoint.url': 'https://dev-531534.okta.com/oauth2/default/v1/token',
-        //'bearer.auth.client.id': '0oa3tq39ol3OLrnQj4x7',
-        //'bearer.auth.client.secret': 'cLXpPxMZ0eA_tc87AL2ZrtZWZzQtPokpYZcOl8gr',
-        //'bearer.auth.scope': 'kirk-scope',
-        //'bearer.auth.logical.cluster': 'lsrc-8yxg20',
-        //'bearer.auth.identity.pool.id': 'pool-wQOq'
+        //'bearer.auth.issuer.endpoint.url': '',
+        //'bearer.auth.client.id': '',
+        //'bearer.auth.client.secret': '',
+        //'bearer.auth.scope': '',
+        //'bearer.auth.logical.cluster': '',
+        //'bearer.auth.identity.pool.id': ''
 
         public static async Task Main(string[] args)
         {
@@ -70,7 +70,7 @@ namespace Confluent.Kafka.Examples.OAuthOIDC
                 SaslOauthbearerTokenEndpointUrl = OAuthBearerTokenEndpointURL,
                 SaslOauthbearerScope = OAuthBearerScope,
             };
-            commonConfig.Set("sasl.oauthbearer.extensions", "logicalCluster=lkc-gjr253,identityPoolId=pool-wQOq");
+            commonConfig.Set("sasl.oauthbearer.extensions", "logicalCluster=,identityPoolId=");
 
             var consumerConfig = new ConsumerConfig
             {
@@ -86,18 +86,18 @@ namespace Confluent.Kafka.Examples.OAuthOIDC
                 AutoOffsetReset = AutoOffsetReset.Earliest,
                 EnableAutoOffsetStore = false
             };
-            consumerConfig.Set("sasl.oauthbearer.extensions", "logicalCluster=lkc-gjr253,identityPoolId=pool-wQOq");
+            consumerConfig.Set("sasl.oauthbearer.extensions", "logicalCluster=,identityPoolId=");
 
             var schemaRegistryConfig = new SchemaRegistryConfig();
-            schemaRegistryConfig.Set("schema.registry.url", "https://psrc-rrk3g1.eastus.azure.confluent.cloud");
-            //schemaRegistryConfig.Set("schema.registry.basic.auth.user.info", "OJVS7YASPQKL4ORN:bYMxXMV6E67aTdhMt5R66nWk7u9aB5CP+QCtEnrNgYebiNExfCajTSzX1MqmW2RT");
+            schemaRegistryConfig.Set("schema.registry.url", "");
+            //schemaRegistryConfig.Set("schema.registry.basic.auth.user.info", "");
             schemaRegistryConfig.Set("schema.registry.bearer.auth.credentials.source", "OAUTHBEARER");
-            schemaRegistryConfig.Set("schema.registry.bearer.auth.issuer.endpoint.url", "https://dev-531534.okta.com/oauth2/default/v1/token");
-            schemaRegistryConfig.Set("schema.registry.bearer.auth.client.id", "0oa3tq39ol3OLrnQj4x7");
-            schemaRegistryConfig.Set("schema.registry.bearer.auth.client.secret", "cLXpPxMZ0eA_tc87AL2ZrtZWZzQtPokpYZcOl8gr");
-            schemaRegistryConfig.Set("schema.registry.bearer.auth.scope", "kirk-scope");
-            schemaRegistryConfig.Set("schema.registry.bearer.auth.logical.cluster", "lsrc-8yxg20");
-            schemaRegistryConfig.Set("schema.registry.bearer.auth.identity.pool.id", "pool-wQOq");
+            schemaRegistryConfig.Set("schema.registry.bearer.auth.issuer.endpoint.url", "");
+            schemaRegistryConfig.Set("schema.registry.bearer.auth.client.id", "");
+            schemaRegistryConfig.Set("schema.registry.bearer.auth.client.secret", "");
+            schemaRegistryConfig.Set("schema.registry.bearer.auth.scope", "");
+            schemaRegistryConfig.Set("schema.registry.bearer.auth.logical.cluster", "");
+            schemaRegistryConfig.Set("schema.registry.bearer.auth.identity.pool.id", "");
 
             using (var schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryConfig))
             using (var producer = new ProducerBuilder<String, GenericRecord>(commonConfig)

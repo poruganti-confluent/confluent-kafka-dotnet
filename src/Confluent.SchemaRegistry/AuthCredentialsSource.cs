@@ -31,6 +31,11 @@ namespace Confluent.SchemaRegistry
         /// <summary>
         ///     Credentials are specified via the `sasl.username` and `sasl.password` configuration properties.
         /// </summary>
-        SaslInherit
+        SaslInherit,
+
+        /// <summary>
+        /// 
+        /// </summary>
+        OAuthBearer
     }
 }

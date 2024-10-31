@@ -14,6 +14,7 @@
 //
 // Refer to LICENSE for more information.
 
+using System.Collections.Generic;
 using System.Net.Http.Headers;
 
 namespace Confluent.SchemaRegistry
@@ -30,5 +31,13 @@ namespace Confluent.SchemaRegistry
         ///   The authentication header for HTTP request messages
         /// </returns>
         AuthenticationHeaderValue GetAuthenticationHeader();
+
+        /// <summary>
+        ///   Get the extension headers for HTTP requests
+        /// </summary>
+        /// <returns>
+        ///   The extension headers for HTTP request messages
+        /// </returns>
+        List<AuthenticationHeaderValue> GetExtensionHeaders();
     }
 }

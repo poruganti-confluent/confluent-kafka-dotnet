@@ -77,6 +77,52 @@ namespace Confluent.SchemaRegistry
             /// </summary>
             public const string SchemaRegistryBasicAuthUserInfo = "schema.registry.basic.auth.user.info";
 
+            // OAuth properties for Schema Registry
+            /// <summary>
+            /// Specifies the configuration property(ies) that provide the bearer authentication credentials.
+            /// default: OAUTHBEARER
+            /// </summary>
+            public const string SchemaRegistryBearerAuthCredentialsSource =
+                "schema.registry.bearer.auth.credentials.source";
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const string SchemaRegistryBearerAuthIssuerEndpointUrl =
+                "schema.registry.bearer.auth.issuer.endpoint.url";
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const string SchemaRegistryBearerAuthClientId =
+                "schema.registry.bearer.auth.client.id";
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const string SchemaRegistryBearerAuthClientSecret =
+                "schema.registry.bearer.auth.client.secret";
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const string SchemaRegistryBearerAuthScope =
+                "schema.registry.bearer.auth.scope";
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const string SchemaRegistryBearerAuthLogicalCluster =
+                "schema.registry.bearer.auth.logical.cluster";
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const string SchemaRegistryBearerAuthIdentityPoolId =
+                "schema.registry.bearer.auth.identity.pool.id";
+
+
+
             /// <summary>
             ///     Key subject name strategy.
             /// </summary>
@@ -155,6 +201,47 @@ namespace Confluent.SchemaRegistry
                 else if (value == AuthCredentialsSource.SaslInherit)
                 {
                     this.properties[PropertyNames.SchemaRegistryBasicAuthCredentialsSource] = "SASL_INHERIT";
+                }
+                else
+                {
+                    throw new NotImplementedException(
+                        $"Unknown ${PropertyNames.SchemaRegistryBasicAuthCredentialsSource} value: {value}.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public AuthCredentialsSource? BearerAuthCredentialsSource
+        {
+            get
+            {
+                var r = Get(PropertyNames.SchemaRegistryBearerAuthCredentialsSource);
+                if (r == null)
+                {
+                    return null;
+                }
+
+                if (r == "OAUTHBEARER")
+                {
+                    return AuthCredentialsSource.OAuthBearer;
+                }
+
+                // TODO : Extend for OAUTHBEARER_INHERIT
+
+                throw new ArgumentException(
+                    $"Unknown ${PropertyNames.SchemaRegistryBasicAuthCredentialsSource} value: {r}.");
+            }
+            set
+            {
+                if (value == null)
+                {
+                    this.properties.Remove(PropertyNames.SchemaRegistryBearerAuthCredentialsSource);
+                }
+                else if (value == AuthCredentialsSource.OAuthBearer)
+                {
+                    this.properties[PropertyNames.SchemaRegistryBearerAuthCredentialsSource] = "OAUTHBEARER";
                 }
                 else
                 {
@@ -270,6 +357,59 @@ namespace Confluent.SchemaRegistry
             set { SetObject(SchemaRegistryConfig.PropertyNames.SchemaRegistryBasicAuthUserInfo, value); }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public string BearerAuthIssuerEndpointUrlserInfo
+        {
+            get { return Get(SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthIssuerEndpointUrl); }
+            set { SetObject(SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthIssuerEndpointUrl, value); }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string BearerAuthClientId
+        {
+            get { return Get(SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthClientId); }
+            set { SetObject(SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthClientId, value); }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string BearerAuthClientSecret
+        {
+            get { return Get(SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthClientSecret); }
+            set { SetObject(SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthClientSecret, value); }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string BearerAuthScope
+        {
+            get { return Get(SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthScope); }
+            set { SetObject(SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthScope, value); }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string BearerAuthLogicalCluster
+        {
+            get { return Get(SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthLogicalCluster); }
+            set { SetObject(SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthLogicalCluster, value); }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string BearerAuthIdentityPoolId
+        {
+            get { return Get(SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthIdentityPoolId); }
+            set { SetObject(SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthIdentityPoolId, value); }
+        }
 
         /// <summary>
         ///     Key subject name strategy.

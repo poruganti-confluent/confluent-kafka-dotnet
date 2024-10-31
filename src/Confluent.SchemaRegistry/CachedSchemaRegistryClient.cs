@@ -27,6 +27,9 @@ using System.Threading;
 using System.Security.Cryptography.X509Certificates;
 using Confluent.Kafka;
 using Microsoft.Extensions.Caching.Memory;
+using Confluent.SchemaRegistry.Rest.Authentication;
+using static Confluent.SchemaRegistry.Rest.Authentication.BearerAccessTokenHandler;
+using Microsoft.Extensions.Logging.Abstractions;
 
 
 namespace Confluent.SchemaRegistry
@@ -312,6 +315,89 @@ namespace Confluent.SchemaRegistry
                 }
             }
 
+            var bearerAuthSource = config.FirstOrDefault(prop =>
+                prop.Key.ToLower() == SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthCredentialsSource)
+                .Value ?? "";
+
+            if (bearerAuthSource != null && bearerAuthSource.Equals("OAUTHBEARER", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var bearerAuthIssuerEndpointUrl = config.FirstOrDefault(prop =>
+                    prop.Key.ToLower() == SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthIssuerEndpointUrl).Value ?? "";
+
+
+                if (String.IsNullOrEmpty(bearerAuthIssuerEndpointUrl))
+                {
+                    throw new ArgumentException(
+                        $"Invalid authentication header value provider configuration:  schema.registry.bearer.auth.issuer.endpoint.url not specified");
+                }
+
+                var clientId = config.FirstOrDefault(prop =>
+                    prop.Key.ToLower() == SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthClientId).Value ?? "";
+
+
+                if (String.IsNullOrEmpty(clientId))
+                {
+                    throw new ArgumentException(
+                        $"Invalid authentication header value provider configuration:  schema.registry.bearer.auth.client.id not specified");
+                }
+
+                var clientSecret = config.FirstOrDefault(prop =>
+                    prop.Key.ToLower() == SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthClientSecret).Value ?? "";
+
+
+                if (String.IsNullOrEmpty(clientSecret))
+                {
+                    throw new ArgumentException(
+                        $"Invalid authentication header value provider configuration:  schema.registry.bearer.auth.client.secret not specified");
+                }
+
+                var scope = config.FirstOrDefault(prop =>
+                    prop.Key.ToLower() == SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthScope).Value ?? "";
+
+
+                if (String.IsNullOrEmpty(scope))
+                {
+                    throw new ArgumentException(
+                        $"Invalid authentication header value provider configuration: schema.registry.bearer.auth.scope not specified");
+                }
+
+                var logicalCluster= config.FirstOrDefault(prop =>
+                    prop.Key.ToLower() == SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthLogicalCluster).Value ?? "";
+
+
+                if (String.IsNullOrEmpty(logicalCluster))
+                {
+                    throw new ArgumentException(
+                        $"Invalid authentication header value provider configuration: schema.registry.bearer.auth.logical.cluster not specified");
+                }
+
+                var identityPoolId = config.FirstOrDefault(prop =>
+                    prop.Key.ToLower() == SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthIdentityPoolId).Value ?? "";
+
+
+                if (String.IsNullOrEmpty(identityPoolId))
+                {
+                    throw new ArgumentException(
+                        $"Invalid authentication header value provider configuration: schema.registry.bearer.auth.identity.pool.id not specified");
+                }
+
+                // Get the Authentication Token
+                BearerConfig bearerConfig = new BearerConfig()
+                {
+                    tokenUrl = bearerAuthIssuerEndpointUrl,
+                    clientId = clientId,
+                    clientSecret = clientSecret,
+                    scope = scope
+                };
+
+                BearerAccessTokenHandler tokenHandler = new BearerAccessTokenHandler();
+                var bearerAccessToken = tokenHandler.GetAccessToken(bearerConfig);
+
+                  authenticationHeaderValueProvider = new BearerAuthenticationHeaderValueProvider(bearerAccessToken.AccessToken, logicalCluster, identityPoolId);
+
+            }
+
+
             foreach (var property in config)
             {
                 if (!property.Key.StartsWith("schema.registry."))
@@ -325,6 +411,13 @@ namespace Confluent.SchemaRegistry
                     property.Key != SchemaRegistryConfig.PropertyNames.SchemaRegistryLatestCacheTtlSecs &&
                     property.Key != SchemaRegistryConfig.PropertyNames.SchemaRegistryBasicAuthCredentialsSource &&
                     property.Key != SchemaRegistryConfig.PropertyNames.SchemaRegistryBasicAuthUserInfo &&
+                    property.Key != SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthCredentialsSource &&
+                    property.Key != SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthClientId &&
+                    property.Key != SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthClientSecret &&
+                    property.Key != SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthIssuerEndpointUrl &&
+                    property.Key != SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthScope &&
+                    property.Key != SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthLogicalCluster &&
+                    property.Key != SchemaRegistryConfig.PropertyNames.SchemaRegistryBearerAuthIdentityPoolId &&
                     property.Key != SchemaRegistryConfig.PropertyNames.SchemaRegistryKeySubjectNameStrategy &&
                     property.Key != SchemaRegistryConfig.PropertyNames.SchemaRegistryValueSubjectNameStrategy &&
                     property.Key != SchemaRegistryConfig.PropertyNames.SslCaLocation &&

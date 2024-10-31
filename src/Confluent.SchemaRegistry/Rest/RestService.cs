@@ -306,6 +306,17 @@ namespace Confluent.SchemaRegistry
             if (authenticationHeaderValueProvider != null)
             {
                 request.Headers.Authorization = authenticationHeaderValueProvider.GetAuthenticationHeader();
+
+                var extensionHeaders = authenticationHeaderValueProvider.GetExtensionHeaders();
+
+                if (extensionHeaders != null)
+                {
+                    foreach (var extensionHeader in extensionHeaders)
+                    {
+                        request.Headers.Add(extensionHeader.Scheme, extensionHeader.Parameter);
+                    }
+                }
+
             }
 
             return request;

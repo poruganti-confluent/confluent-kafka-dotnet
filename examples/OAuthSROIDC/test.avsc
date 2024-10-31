@@ -1,0 +1,18 @@
+{
+  "doc": "Sample schema",
+  "fields": [
+    {
+      "doc": "The string is a unicode character sequence.",
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "doc": "The int type is a 32-bit signed integer.",
+      "name": "age",
+      "type": "int"
+    }
+  ],
+  "name": "sampleRecord",
+  "namespace": "Confluent",
+  "type": "record"
+}

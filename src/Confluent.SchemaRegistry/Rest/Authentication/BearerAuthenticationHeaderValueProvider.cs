@@ -14,6 +14,7 @@
 //
 // Refer to LICENSE for more information.
 
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
@@ -26,32 +27,36 @@ namespace Confluent.SchemaRegistry
     ///
     ///     See: https://datatracker.ietf.org/doc/html/rfc7617
     /// </summary>
-    public class BasicAuthenticationHeaderValueProvider : IAuthenticationHeaderValueProvider
+    public class BearerAuthenticationHeaderValueProvider : IAuthenticationHeaderValueProvider
     {
         readonly AuthenticationHeaderValue authenticationHeader;
+        readonly List<AuthenticationHeaderValue> extensionHeaders = new List<AuthenticationHeaderValue>();
 
         /// <summary>
-        ///     Initialize a new instance of the BasicAuthenticationHeaderValueProvider class.
+        ///     Initialize a new instance of the BearerAuthenticationHeaderValueProvider class.
         /// </summary>
-        /// <param name="username">
-        ///     The username
+        /// <param name="token">
+        ///     The bearer token
         /// </param>
-        /// <param name="password">
-        ///     The password
+        /// <param name="logicalCluster">
+        ///     The logical cluster
         /// </param>
-        public BasicAuthenticationHeaderValueProvider(string username, string password)
+        /// <param name="identityPoolId">
+        ///     The Identity pool id
+        /// </param>
+
+        public BearerAuthenticationHeaderValueProvider(string token, string logicalCluster, string identityPoolId)
         {
-            authenticationHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}")));
+            authenticationHeader = new AuthenticationHeaderValue("Bearer", token);
+
+            extensionHeaders.Add(new AuthenticationHeaderValue("target-sr-cluster", logicalCluster));
+            extensionHeaders.Add(new AuthenticationHeaderValue("Confluent-Identity-Pool-Id", identityPoolId));
         }
 
         /// <inheritdoc/>
         public AuthenticationHeaderValue GetAuthenticationHeader() => authenticationHeader;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public List<AuthenticationHeaderValue> GetExtensionHeaders() => null;
-
+        /// <inheritdoc/>
+        public List<AuthenticationHeaderValue> GetExtensionHeaders() => extensionHeaders;
     }
 }
